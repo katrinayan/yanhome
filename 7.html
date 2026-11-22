@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>🏡 搬屋7天打包與採購指南｜父母・兒子・寵物龜專屬</title>
+  <!-- 載入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 載入 Noto Sans TC 繁體中文字體，確保手機端清晰易讀 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            cream: '#FDFBF7',
+            sage: {
+              DEFAULT: '#2E6F5E',
+              light: '#E6F0ED',
+              dark: '#215245',
+            },
+            parent: {
+              DEFAULT: '#D97706',
+              bg: '#FEF3C7',
+              text: '#92400E',
+            },
+            son: {
+              DEFAULT: '#2563EB',
+              bg: '#DBEAFE',
+              text: '#1E40AF',
+            },
+            special: {
+              DEFAULT: '#0D9488',
+              bg: '#CCFBF1',
+              text: '#115E59',
+            },
+            family: {
+              DEFAULT: '#4B5563',
+              bg: '#F3F4F6',
+              text: '#1F2937',
+            },
+            charcoal: '#1F2937',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* 基礎無障礙與長輩友善樣式設定 */
+    html {
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #FDFBF7;
+      color: #1F2937;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    /* 隱藏橫向捲軸但保留流暢滑動 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 特大字體模式全域縮放 (20px - 22px 基礎字體) */
+    body.font-xl .text-dynamic-base {
+      font-size: 1.35rem !important; /* 約 21.6px */
+      line-height: 1.65 !important;
+    }
+    body.font-xl .text-dynamic-sm {
+      font-size: 1.15rem !important; /* 約 18.4px */
+      line-height: 1.5 !important;
+    }
+    body.font-xl .text-dynamic-lg {
+      font-size: 1.6rem !important; /* 約 25.6px */
+      line-height: 1.45 !important;
+    }
+    body.font-xl .text-dynamic-title {
+      font-size: 1.85rem !important; /* 約 29.6px */
+      line-height: 1.35 !important;
+    }
+
+    /* 勾選動畫與完成狀態 */
+    .task-card {
+      transition: transform 0.12s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .task-card:active {
+      transform: scale(0.99);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-cream text-charcoal selection:bg-sage-light selection:text-sage">
+
+  <!-- ==================== 頂部固定導覽與進度區 ==================== -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 pt-3 pb-2.5">
+      <!-- 標題列與字體切換按鈕 -->
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <h1 class="text-dynamic-title text-xl sm:text-2xl font-black text-sage tracking-tight leading-snug">
+            🏡 搬屋 7 天打包與採購指南
+          </h1>
+          <p class="text-dynamic-sm text-sm sm:text-base font-medium text-stone-600 mt-0.5">
+            父母房・兒子房・陽台・女兒遺留物・寵物龜
+          </p>
+        </div>
+
+        <!-- 一鍵切換字體大小按鈕 (高度 >= 48px) -->
+        <button
+          id="fontToggleBtn"
+          type="button"
+          onclick="toggleFontSize()"
+          aria-label="切換字體大小"
+          class="shrink-0 min-h-[48px] flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl border-2 border-sage bg-sage-light text-sage font-bold text-sm sm:text-base shadow-sm active:scale-95 transition"
+        >
+          <span class="text-lg">🔍</span>
+          <span id="fontToggleText">字體：標準</span>
+        </button>
+      </div>
+
+      <!-- 總體完成進度條 -->
+      <div class="mt-3 bg-stone-100 rounded-2xl p-2.5 border border-stone-200">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-dynamic-sm text-sm font-bold text-stone-700">
+            📊 整體打包完成進度
+          </span>
+          <span id="progressText" class="text-dynamic-sm text-sm font-black text-sage">
+            0% (0 / 23 項)
+          </span>
+        </div>
+        <div class="w-full h-3.5 bg-stone-200 rounded-full overflow-hidden">
+          <div
+            id="progressBar"
+            class="h-full bg-sage rounded-full transition-all duration-300 ease-out"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 天數與功能分頁導覽列 (橫向滑動 + 大觸控目標) -->
+    <nav aria-label="打包日程與採購分頁" class="max-w-2xl mx-auto px-3 pb-2.5 overflow-x-auto no-scrollbar">
+      <div id="tabContainer" class="flex items-center gap-2 min-w-max">
+        <!-- 由 JavaScript 動態渲染分頁按鈕 -->
+      </div>
+    </nav>
+  </header>
+
+  <!-- ==================== 主要內容區 ==================== -->
+  <main class="flex-1 max-w-2xl w-full mx-auto px-4 pt-4 pb-14">
+
+    <!-- 角色/區域篩選膠囊列 (僅在每日任務分頁顯示) -->
+    <div id="roleFilterSection" class="mb-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-dynamic-sm text-sm font-bold text-stone-600">👤 按負責人／區域篩選：</span>
+        <span id="tabCompletionBadge" class="text-dynamic-sm text-xs font-bold px-2.5 py-1 rounded-full bg-sage-light text-sage">
+          本階段：0 / 0
+        </span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <button
+          type="button"
+          onclick="setRoleFilter('all')"
+          data-role="all"
+          class="role-btn min-h-[48px] py-2.5 px-2 rounded-2xl font-bold text-dynamic-sm text-sm border-2 transition text-center shadow-sm"
+        >
+          全部任務
+        </button>
+        <button
+          type="button"
+          onclick="setRoleFilter('parents')"
+          data-role="parents"
+          class="role-btn min-h-[48px] py-2.5 px-2 rounded-2xl font-bold text-dynamic-sm text-sm border-2 transition text-center shadow-sm"
+        >
+          👴👵 父母房／爸媽
+        </button>
+        <button
+          type="button"
+          onclick="setRoleFilter('son')"
+          data-role="son"
+          class="role-btn min-h-[48px] py-2.5 px-2 rounded-2xl font-bold text-dynamic-sm text-sm border-2 transition text-center shadow-sm"
+        >
+          🧑 兒子房／兒子
+        </button>
+        <button
+          type="button"
+          onclick="setRoleFilter('special')"
+          data-role="special"
+          class="role-btn min-h-[48px] py-2.5 px-2 rounded-2xl font-bold text-dynamic-sm text-sm border-2 transition text-center shadow-sm"
+        >
+          🐢 烏龜與女兒雜物
+        </button>
+      </div>
+    </div>
+
+    <!-- 分頁標題與重點說明卡片 -->
+    <section id="sectionHeaderCard" class="mb-4 rounded-3xl bg-white p-4 sm:p-5 border border-stone-200 shadow-sm">
+      <!-- 由 JS 動態填入當前分頁標題與說明 -->
+    </section>
+
+    <!-- 任務清單 / 採購討論 / 秘訣 內容容器 -->
+    <section id="contentArea" class="space-y-3.5">
+      <!-- 由 JS 動態渲染 -->
+    </section>
+
+    <!-- 底部重設與操作提示區 -->
+    <footer class="mt-10 pt-6 border-t border-stone-200 text-center space-y-4">
+      <p class="text-dynamic-sm text-sm text-stone-500">
+        ✅ 打勾進度、採購清單與字體設定會自動儲存在您的手機裡，關閉網頁也不會不見。
+      </p>
+      <button
+        type="button"
+        onclick="openResetModal()"
+        class="min-h-[48px] inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-white border-2 border-red-200 text-red-700 font-bold text-dynamic-sm text-base hover:bg-red-50 active:scale-95 transition shadow-sm"
+      >
+        <span>🔄</span>
+        <span>重設所有打包打勾進度</span>
+      </button>
+    </footer>
+  </main>
+
+  <!-- ==================== 自訂確認對話框 (取代 confirm/alert) ==================== -->
+  <div
+    id="resetModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+  >
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-xl border border-stone-200 space-y-4">
+      <div class="text-center">
+        <div class="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-3xl mx-auto mb-3">
+          ⚠️
+        </div>
+        <h2 id="modalTitle" class="text-dynamic-lg text-xl font-black text-charcoal">
+          確定要重設打包進度嗎？
+        </h2>
+        <p class="text-dynamic-base text-base text-stone-600 mt-2">
+          這將會清除第 1～7 天所有已經打勾的打包紀錄（不會刪除新屋採購清單項目）。
+        </p>
+      </div>
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <button
+          type="button"
+          onclick="closeResetModal()"
+          class="min-h-[48px] py-3.5 px-4 rounded-2xl border-2 border-stone-300 bg-stone-100 text-stone-800 font-bold text-dynamic-base text-base active:scale-95 transition"
+        >
+          取消保留
+        </button>
+        <button
+          type="button"
+          onclick="confirmResetProgress()"
+          class="min-h-[48px] py-3.5 px-4 rounded-2xl bg-red-600 text-white font-bold text-dynamic-base text-base active:scale-95 transition shadow-sm"
+        >
+          確定重設
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 輕量提示訊息 Toast ==================== -->
+  <div
+    id="toastBanner"
+    class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 hidden bg-charcoal text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-dynamic-sm text-base transition-opacity text-center max-w-[90vw]"
+  >
+    提示訊息
+  </div>
+
+  <!-- ==================== 應用程式邏輯與資料 ==================== -->
+  <script>
+    // 本地儲存鍵值
+    const STORAGE_KEYS = {
+      COMPLETED: 'moving_checklist_v2_completed',
+      FONT_XL: 'moving_checklist_v2_font_xl',
+      ACTIVE_TAB: 'moving_checklist_v2_tab',
+      SHOPPING_LIST: 'moving_checklist_v2_shopping'
+    };
+
+    // 7 個橫向滑動分頁定義
+    const TABS = [
+      { id: 'day7_6',   label: '第7-6天 (陽台＆女兒物)', type: 'tasks' },
+      { id: 'day5_4',   label: '第5-4天 (廚房＆客廳)',   type: 'tasks' },
+      { id: 'day3',     label: '第3天 (父母＆兒子房)',   type: 'tasks' },
+      { id: 'day2',     label: '第2天 (電器＆龜缸)',     type: 'tasks' },
+      { id: 'day1',     label: '第1天 (隨身包＆烏龜)',   type: 'tasks' },
+      { id: 'shopping', label: '🛒 新屋採購討論',        type: 'shopping' },
+      { id: 'tips',     label: '💡 長輩防累與秘訣',      type: 'tips' }
+    ];
+
+    // 每日任務資料庫 (細分：父母房、兒子房、女兒遺留物、陽台雜物、寵物龜、客廳與廚房)
+    const SECTIONS_DATA = {
+      day7_6: {
+        title: '📅 第 7～6 天：陽台雜物 ＆ 女兒遺留物大清理',
+        subtitle: '先清理最不影響日常生活的「陽台雜物」與「女兒搬走後留下的物品」，避免搬家前夕才忙著問女兒怎麼處理！',
+        tasks: [
+          {
+            id: 't_76_1',
+            role: 'special',
+            areaTag: '女兒雜物',
+            text: '集中女兒搬走後留下的衣物、書籍與紀念品，分類拍照傳訊息給女兒確認「留／捐／丟」',
+            note: '設定回覆期限（例如2天內），超過期限未回覆或她說不要的，直接斷捨離或統一裝入「女兒猶豫箱」帶走。'
+          },
+          {
+            id: 't_76_2',
+            role: 'son',
+            areaTag: '陽台雜物',
+            text: '清理陽台雜物：淘汰破舊花盆、過期園藝土、生鏽工具與閒置雜物；清潔工具集中裝袋',
+            note: '要帶去新屋的盆栽，從今天起減少澆水（搬家前2天停水），減輕重量且避免搬運時泥水漏出。'
+          },
+          {
+            id: 't_76_3',
+            role: 'parents',
+            areaTag: '陽台雜物',
+            text: '篩選陽台曬衣架、衣夾與洗衣籃，只保留常用的，老舊脆化的塑膠衣架直接丟棄',
+            note: '曬衣竹竿或大型折疊曬衣架，最後一天再用膠帶綁成一束方便搬運。'
+          },
+          {
+            id: 't_76_4',
+            role: 'special',
+            areaTag: '寵物龜',
+            text: '盤點寵物龜備品：把多餘的濾材、備用加溫棒、多餘龜糧與清洗刷具先裝箱',
+            note: '只留未來 6 天要餵食的份量在龜缸旁，避免打包時翻找不到龜糧。'
+          }
+        ]
+      },
+      day5_4: {
+        title: '🍳 第 5～4 天：廚房大減法 ＆ 客廳雜物',
+        subtitle: '家中沒有書房，客廳的雜物、報紙與藥箱要趁這兩天整理好；廚房只留極簡餐具，三餐盡量簡單吃。',
+        tasks: [
+          {
+            id: 't_54_1',
+            role: 'parents',
+            areaTag: '廚房',
+            text: '檢查廚房乾貨、中藥材與長輩保健品，挑出過期品丟棄，快過期的這幾天盡快吃完',
+            note: '未開封的乾貨與茶葉罐可集中裝入小紙箱，箱外註明「廚房乾貨－防壓」。'
+          },
+          {
+            id: 't_54_2',
+            role: 'son',
+            areaTag: '廚房',
+            text: '處理開封易灑的醬料與油鹽（建議丟棄不帶走），用報紙或氣泡紙包好非日常碗盤封箱',
+            note: '碗盤務必「直立」放入小紙箱，千萬不要平疊，能大幅降低搬運碎裂風險。'
+          },
+          {
+            id: 't_54_3',
+            role: 'family',
+            areaTag: '廚房',
+            text: '廚房只留極簡餐具：3個碗、3雙筷子、1個平底鍋、1個電熱水壺，其餘全數封箱',
+            note: '確保這幾天爸媽隨時有溫熱水喝、有簡單餐具可用即可。'
+          },
+          {
+            id: 't_54_4',
+            role: 'son',
+            areaTag: '客廳',
+            text: '清理客廳電視櫃抽屜、舊報紙雜誌、多餘充電線與擺設品，分別裝箱並貼好標籤',
+            note: '家中無書房，客廳文件與帳單請集中放進一個文件夾，隨身帶走不封箱。'
+          }
+        ]
+      },
+      day3: {
+        title: '🛏️ 第 3 天：父母房 ＆ 兒子房衣櫃分類',
+        subtitle: '爸媽與兒子各自整理自己房間！長輩坐著挑選「留、丟、猶豫」，彎腰裝箱與封膠帶交給兒子。',
+        tasks: [
+          {
+            id: 't_3_1',
+            role: 'parents',
+            areaTag: '父母房',
+            text: '父母房整理：各自挑選衣物與換季厚被，每人只留未來4天要穿的衣服（含搬家當天防滑鞋）',
+            note: '拿不定主意超過5秒的舊衣物或紀念品，直接放進「猶豫箱」，不在現場糾結傷神。'
+          },
+          {
+            id: 't_3_2',
+            role: 'parents',
+            areaTag: '父母房',
+            text: '整理父母房床頭櫃抽屜：備用老花眼鏡、護膝、按摩膏與常備藥集中放進專用收納盒',
+            note: '每天必吃的處方藥與血壓計千萬別封箱，留到第1天放進隨身包。'
+          },
+          {
+            id: 't_3_3',
+            role: 'son',
+            areaTag: '兒子房',
+            text: '兒子房整理：打包個人衣物、電腦周邊配件、模型或私人收藏，並協助封箱父母房的紙箱',
+            note: '厚外套或正裝可直接連衣架套入大垃圾袋綁緊，到新家一掛就完成。'
+          },
+          {
+            id: 't_3_4',
+            role: 'family',
+            areaTag: '浴室',
+            text: '浴室大清空：備用洗髮水、沐浴露、毛巾全部封箱；只留一套正在用的洗漱用品放小籃子',
+            note: '這個洗漱小籃子放到搬家前一晚擦乾裝袋帶走。'
+          }
+        ]
+      },
+      day2: {
+        title: '🔌 第 2 天：大型電器斷電、家具拆裝 ＆ 龜缸準備',
+        subtitle: '冰箱提前24小時斷電除霜！若舊洗衣機不帶走（打算新屋買新機），今天也一併確認斷水斷電處理。',
+        tasks: [
+          {
+            id: 't_2_1',
+            role: 'family',
+            areaTag: '廚房電器',
+            text: '搬家前24小時清空冰箱食材，拔掉插頭並打開冰箱門通風除霜（避免搬運時漏水）',
+            note: '冰箱內部擦乾後，用膠帶把冰箱門暫時貼牢，防止搬運途中門打開撞壞。'
+          },
+          {
+            id: 't_2_2',
+            role: 'son',
+            areaTag: '陽台電器',
+            text: '處理舊洗衣機：拔除插頭並排空管線殘水（若不帶去新屋，確認回收或留置安排）',
+            note: '提醒：新屋採購清單正在討論是否購買新洗衣機，記得先量度新屋洗衣機位尺寸！'
+          },
+          {
+            id: 't_2_3',
+            role: 'special',
+            areaTag: '寵物龜',
+            text: '提前準備好「烏龜安全移運箱」（透氣整理箱＋微濕毛巾），並開始停餵龜糧（防搬運途中有排泄物）',
+            note: '搬家前 1～2 天停食對烏龜最安全，可減少緊迫與排泄，抵達新家安頓好再餵食。'
+          }
+        ]
+      },
+      day1: {
+        title: '🎒 第 1 天（搬家前一晚）：絕不封箱隨身包 ＆ 烏龜移運箱',
+        subtitle: '今晚把全屋最後「絕不封箱」的隨身物品與烏龜移運箱集中放在大門口「不可搬走區」，明天自己帶走！',
+        tasks: [
+          {
+            id: 't_1_1',
+            role: 'parents',
+            areaTag: '父母房隨身',
+            text: '打包長輩專屬隨身藥物包（每日處方藥、血壓計、老花眼鏡、藥膏、護膝）放進爸媽隨身背包',
+            note: '務必由爸媽自己隨身帶著，確保搬家當天隨時拿得到藥與眼鏡。'
+          },
+          {
+            id: 't_1_2',
+            role: 'family',
+            areaTag: '全家隨身',
+            text: '集中重要證件與鑰匙（三人身份證、護照、銀行卡、屋契/租約、新舊屋鑰匙、現金）跟身攜帶',
+            note: '貴重財物與合約絕對不要交給搬運工人上貨車。'
+          },
+          {
+            id: 't_1_3',
+            role: 'special',
+            areaTag: '寵物龜',
+            text: '搬家當天早上：把龜缸水抽乾，過濾器與加溫燈擦乾裝箱；將烏龜放入鋪有微濕毛巾的透氣移運箱',
+            note: '切記「乾運保濕、不可裝水」！帶水搬運容易嗆到烏龜或水濺濕車廂；注意通風與避開陽光直射。'
+          },
+          {
+            id: 't_1_4',
+            role: 'son',
+            areaTag: '兒子房隨身',
+            text: '收齊三人手機充電器、充滿電的行動電源（尿袋）、舊屋路由器（Router）及搬家當天工具包',
+            note: '工具包必備：剪刀、美工刀、封箱膠紙、粗麥克筆、大垃圾袋、濕紙巾、螺絲起子。'
+          },
+          {
+            id: 't_1_5',
+            role: 'family',
+            areaTag: '第一晚過夜包',
+            text: '裝好三人第一晚過夜包（睡衣、隔天換洗衣物、基礎洗漱包、浴巾、兩卷廁紙、保溫瓶）',
+            note: '建議優先幫父母房保留慣用的枕頭與被單，讓長輩新屋第一晚睡得安穩。'
+          }
+        ]
+      }
+    };
+
+    // 🛒 預設新屋採購討論清單資料
+    const DEFAULT_SHOPPING_ITEMS = [
+      {
+        id: 'shop_default_1',
+        name: '床墊（父母房 ＆ 兒子房）',
+        note: '討論重點：量度父母房與兒子房床架尺寸、長輩偏好的軟硬度（護脊偏硬）、確認送貨日期配合入伙日',
+        bought: false
+      },
+      {
+        id: 'shop_default_2',
+        name: '洗衣機',
+        note: '討論重點：前置式（大眼雞）或頂揭式、公斤數（三人家庭建議 7-8kg）、舊屋洗衣機處理方式、量度新屋擺放位闊度與高度',
+        bought: false
+      },
+      {
+        id: 'shop_default_3',
+        name: '餐桌（連餐椅）',
+        note: '討論重點：三人日常至多人聚餐伸縮款、圓桌或方桌、選擇圓角防撞設計（保護長輩進出安全）',
+        bought: false
+      }
+    ];
+
+    // 💡 給長輩家庭的貼心提醒資料
+    const TIPS_DATA = {
+      title: '💡 給長輩家庭的 6 個貼心打包秘訣',
+      subtitle: '照顧到父母體力、女兒遺留物溝通，以及寵物龜安全轉移，照著做輕鬆入伙不慌亂！',
+      cards: [
+        {
+          icon: '⏱️',
+          title: '1.「5秒猶豫箱法則」不傷感情',
+          body: '三心兩意、捨不得丟很正常！拿起一件東西，超過 5 秒還決定不了去留，不要在現場爭論，直接放進「猶豫箱」帶去新家。箱外寫上三個月後的日期，三個月內沒打開拿出來用過，到時再整箱捐出或丟掉，完全不痛心。'
+        },
+        {
+          icon: '📸',
+          title: '2. 女兒遺留物「拍照限時確認法」',
+          body: '整理女兒房間留下的物品時，不要替她猜測要不要留！直接攤開拍幾張清楚照片發到家庭群組，請女兒在 2 天內回覆「留／捐／丟」。過期未回覆的統一裝入「女兒猶豫箱」，搬去新屋後請她自己找時間回來整理。'
+        },
+        {
+          icon: '🐢',
+          title: '3. 寵物龜搬運「乾運保濕」最安全',
+          body: '千萬不要連水帶缸一起搬！玻璃龜缸裝水極重易爆裂，行車晃動也會讓烏龜嗆水受傷。搬家當天把水抽乾，讓烏龜待在鋪有「微濕毛巾」的透氣塑膠箱裡乾運保濕，由家人隨車照顧，到了新家先安頓龜缸放水回溫再放龜。'
+        },
+        {
+          icon: '📦',
+          title: '4.「小箱裝重物、大箱裝輕物」',
+          body: '書本、碗盤、中藥罐等重物，一定要用「小紙箱」裝，裝滿才不會重到搬不動；大紙箱只用來裝棉被、枕頭、羽絨衣等輕物。這樣才能好好保護爸媽與兒子的腰椎！'
+        },
+        {
+          icon: '🪑',
+          title: '5.「爸媽坐著分、兒子動手裝」',
+          body: '長輩整理父母房或陽台時，請盡量坐在椅子上挑選物品，分為「要帶走、要丟掉、放猶豫箱」三堆即可。所有彎腰裝箱、封膠帶與搬運的工作，全部交給兒子處理。'
+        },
+        {
+          icon: '🚪',
+          title: '6. 大門口貼出「不可搬走區」',
+          body: '搬家前一晚，在舊屋大門旁邊的地上用封箱膠紙貼出一個方框，寫上「未完成／不可搬走」。把長輩藥物包、證件鑰匙、過夜包、烏龜移運箱全部放進框框裡，搬家師傅就不會誤搬上貨車！'
+        }
+      ]
+    };
+
+    // 應用程式狀態
+    let state = {
+      activeTab: 'day7_6',
+      roleFilter: 'all', // 'all' | 'parents' | 'son' | 'special'
+      completedIds: new Set(),
+      fontXL: false,
+      shoppingList: []
+    };
+
+    // 初始化應用程式
+    function initApp() {
+      loadFromStorage();
+      applyFontPreference();
+      renderTabs();
+      renderCurrentView();
+      updateOverallProgress();
+    }
+
+    // 從 localStorage 讀取紀錄
+    function loadFromStorage() {
+      try {
+        const savedCompleted = localStorage.getItem(STORAGE_KEYS.COMPLETED);
+        if (savedCompleted) {
+          const parsed = JSON.parse(savedCompleted);
+          if (Array.isArray(parsed)) {
+            state.completedIds = new Set(parsed);
+          }
+        }
+
+        const savedFont = localStorage.getItem(STORAGE_KEYS.FONT_XL);
+        if (savedFont === 'true') {
+          state.fontXL = true;
+        }
+
+        const savedTab = localStorage.getItem(STORAGE_KEYS.ACTIVE_TAB);
+        if (savedTab && TABS.some(t => t.id === savedTab)) {
+          state.activeTab = savedTab;
+        }
+
+        const savedShopping = localStorage.getItem(STORAGE_KEYS.SHOPPING_LIST);
+        if (savedShopping) {
+          const parsedShop = JSON.parse(savedShopping);
+          if (Array.isArray(parsedShop)) {
+            state.shoppingList = parsedShop;
+          } else {
+            state.shoppingList = [...DEFAULT_SHOPPING_ITEMS];
+          }
+        } else {
+          state.shoppingList = [...DEFAULT_SHOPPING_ITEMS];
+          saveShoppingToStorage();
+        }
+      } catch (err) {
+        console.error('讀取本地紀錄失敗:', err);
+        state.shoppingList = [...DEFAULT_SHOPPING_ITEMS];
+      }
+    }
+
+    // 儲存打包勾選狀態到 localStorage
+    function saveCompletedToStorage() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEYS.COMPLETED,
+          JSON.stringify(Array.from(state.completedIds))
+        );
+      } catch (err) {
+        console.error('儲存進度失敗:', err);
+      }
+    }
+
+    // 儲存採購清單到 localStorage
+    function saveShoppingToStorage() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEYS.SHOPPING_LIST,
+          JSON.stringify(state.shoppingList)
+        );
+      } catch (err) {
+        console.error('儲存採購清單失敗:', err);
+      }
+    }
+
+    // 切換字體大小 (標準 / 特大)
+    function toggleFontSize() {
+      state.fontXL = !state.fontXL;
+      try {
+        localStorage.setItem(STORAGE_KEYS.FONT_XL, String(state.fontXL));
+      } catch (err) {
+        console.error('儲存字體設定失敗:', err);
+      }
+      applyFontPreference();
+    }
+
+    function applyFontPreference() {
+      const btnText = document.getElementById('fontToggleText');
+      if (state.fontXL) {
+        document.body.classList.add('font-xl');
+        btnText.textContent = '字體：特大';
+      } else {
+        document.body.classList.remove('font-xl');
+        btnText.textContent = '字體：標準';
+      }
+    }
+
+    // 切換分頁
+    function selectTab(tabId) {
+      state.activeTab = tabId;
+      try {
+        localStorage.setItem(STORAGE_KEYS.ACTIVE_TAB, tabId);
+      } catch (err) {
+        console.error('儲存分頁狀態失敗:', err);
+      }
+      renderTabs();
+      renderCurrentView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 設定角色篩選
+    function setRoleFilter(role) {
+      state.roleFilter = role;
+      renderCurrentView();
+    }
+
+    // 勾選 / 取消勾選打包任務
+    function toggleTask(taskId) {
+      if (state.completedIds.has(taskId)) {
+        state.completedIds.delete(taskId);
+      } else {
+        state.completedIds.add(taskId);
+      }
+      saveCompletedToStorage();
+      renderTabs();
+      renderCurrentView();
+      updateOverallProgress();
+    }
+
+    // 計算並更新頂部整體打包進度條
+    function updateOverallProgress() {
+      let totalTasks = 0;
+      let completedCount = 0;
+
+      Object.values(SECTIONS_DATA).forEach(section => {
+        section.tasks.forEach(task => {
+          totalTasks++;
+          if (state.completedIds.has(task.id)) {
+            completedCount++;
+          }
+        });
+      });
+
+      const percentage = totalTasks === 0 ? 0 : Math.round((completedCount / totalTasks) * 100);
+      document.getElementById('progressBar').style.width = `${percentage}%`;
+      document.getElementById('progressText').textContent = `${percentage}% (${completedCount} / ${totalTasks} 項)`;
+    }
+
+    // 渲染頂部分頁標籤列
+    function renderTabs() {
+      const container = document.getElementById('tabContainer');
+      container.innerHTML = '';
+
+      TABS.forEach(tab => {
+        const isActive = state.activeTab === tab.id;
+        let isDayAllDone = false;
+
+        if (tab.type === 'tasks' && SECTIONS_DATA[tab.id]) {
+          const tasks = SECTIONS_DATA[tab.id].tasks;
+          isDayAllDone = tasks.length > 0 && tasks.every(t => state.completedIds.has(t.id));
+        }
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => selectTab(tab.id);
+
+        let baseClasses = 'min-h-[48px] px-4 py-2.5 rounded-2xl font-bold text-dynamic-sm text-sm sm:text-base transition flex items-center gap-1.5 border-2 whitespace-nowrap ';
+        if (isActive) {
+          if (tab.id === 'shopping') {
+            baseClasses += 'bg-amber-600 text-white border-amber-600 shadow-sm';
+          } else {
+            baseClasses += 'bg-sage text-white border-sage shadow-sm';
+          }
+        } else {
+          baseClasses += 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100';
+        }
+
+        btn.className = baseClasses;
+        btn.innerHTML = `
+          <span>${tab.label}</span>
+          ${isDayAllDone ? '<span class="text-xs bg-white text-sage px-1.5 py-0.5 rounded-full font-black">✓</span>' : ''}
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    // 渲染當前選中的分頁內容
+    function renderCurrentView() {
+      const currentTabObj = TABS.find(t => t.id === state.activeTab) || TABS[0];
+      const roleFilterSection = document.getElementById('roleFilterSection');
+      const sectionHeaderCard = document.getElementById('sectionHeaderCard');
+      const contentArea = document.getElementById('contentArea');
+
+      if (currentTabObj.type === 'tasks') {
+        roleFilterSection.classList.remove('hidden');
+        updateRoleFilterButtons();
+
+        const section = SECTIONS_DATA[currentTabObj.id];
+        const totalInSection = section.tasks.length;
+        const doneInSection = section.tasks.filter(t => state.completedIds.has(t.id)).length;
+
+        document.getElementById('tabCompletionBadge').textContent = `本階段：${doneInSection} / ${totalInSection} 完成`;
+
+        sectionHeaderCard.innerHTML = `
+          <h2 class="text-dynamic-lg text-lg sm:text-xl font-black text-charcoal">${section.title}</h2>
+          <p class="text-dynamic-base text-base text-stone-600 mt-1.5 leading-relaxed">${section.subtitle}</p>
+        `;
+
+        // 過濾角色任務（'family' 全家任務在各角色篩選時也會顯示，確保不會漏看共同事項）
+        const filteredTasks = section.tasks.filter(task => {
+          if (state.roleFilter === 'all') return true;
+          if (state.roleFilter === 'parents') return task.role === 'parents' || task.role === 'family';
+          if (state.roleFilter === 'son') return task.role === 'son' || task.role === 'family';
+          if (state.roleFilter === 'special') return task.role === 'special';
+          return true;
+        });
+
+        if (filteredTasks.length === 0) {
+          contentArea.innerHTML = `
+            <div class="bg-white rounded-3xl p-8 text-center border border-stone-200">
+              <p class="text-dynamic-base text-base font-bold text-stone-500">這個階段沒有專屬此類別的獨立任務，可以點擊「全部任務」查看其他家人的進度喔！</p>
+            </div>
+          `;
+          return;
+        }
+
+        contentArea.innerHTML = filteredTasks.map(task => renderTaskCardHTML(task)).join('');
+      } else if (currentTabObj.type === 'shopping') {
+        roleFilterSection.classList.add('hidden');
+        renderShoppingView(sectionHeaderCard, contentArea);
+      } else if (currentTabObj.type === 'tips') {
+        roleFilterSection.classList.add('hidden');
+        renderTipsView(sectionHeaderCard, contentArea);
+      }
+    }
+
+    // 更新角色篩選按鈕外觀
+    function updateRoleFilterButtons() {
+      const buttons = document.querySelectorAll('.role-btn');
+      buttons.forEach(btn => {
+        const role = btn.getAttribute('data-role');
+        const isSelected = state.roleFilter === role;
+
+        btn.className = 'role-btn min-h-[48px] py-2.5 px-2 rounded-2xl font-bold text-dynamic-sm text-sm border-2 transition text-center shadow-sm ';
+        if (isSelected) {
+          if (role === 'parents') {
+            btn.className += 'bg-amber-600 text-white border-amber-600';
+          } else if (role === 'son') {
+            btn.className += 'bg-blue-600 text-white border-blue-600';
+          } else if (role === 'special') {
+            btn.className += 'bg-teal-700 text-white border-teal-700';
+          } else {
+            btn.className += 'bg-charcoal text-white border-charcoal';
+          }
+        } else {
+          btn.className += 'bg-white text-stone-700 border-stone-200 hover:bg-stone-50';
+        }
+      });
+    }
+
+    // 生成單張打包任務卡片 HTML
+    function renderTaskCardHTML(task) {
+      const isDone = state.completedIds.has(task.id);
+
+      let roleBadgeHTML = '';
+      if (task.role === 'parents') {
+        roleBadgeHTML = `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-dynamic-sm text-xs sm:text-sm font-black bg-parent-bg text-parent-text border border-amber-300">👴👵 爸媽負責</span>`;
+      } else if (task.role === 'son') {
+        roleBadgeHTML = `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-dynamic-sm text-xs sm:text-sm font-black bg-son-bg text-son-text border border-blue-300">🧑 兒子負責</span>`;
+      } else if (task.role === 'special') {
+        roleBadgeHTML = `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-dynamic-sm text-xs sm:text-sm font-black bg-special-bg text-special-text border border-teal-300">🐢 特別區域</span>`;
+      } else {
+        roleBadgeHTML = `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-dynamic-sm text-xs sm:text-sm font-black bg-family-bg text-family-text border border-stone-300">👨‍👩‍👦 全家一起</span>`;
+      }
+
+      const areaBadgeHTML = task.areaTag
+        ? `<span class="inline-flex items-center px-2.5 py-1 rounded-xl text-dynamic-sm text-xs sm:text-sm font-bold bg-stone-100 text-stone-700 border border-stone-200">📍 ${task.areaTag}</span>`
+        : '';
+
+      const cardBg = isDone
+        ? 'bg-sage-light/70 border-sage/40'
+        : 'bg-white border-stone-200 hover:border-sage/50';
+
+      const textStyle = isDone
+        ? 'line-through text-stone-500'
+        : 'text-charcoal';
+
+      return `
+        <div
+          role="checkbox"
+          aria-checked="${isDone}"
+          tabindex="0"
+          onclick="toggleTask('${task.id}')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleTask('${task.id}');}"
+          class="task-card cursor-pointer rounded-3xl p-4 sm:p-5 border-2 shadow-sm flex items-start gap-3.5 select-none ${cardBg}"
+        >
+          <!-- 超大好點擊核取方塊 -->
+          <div class="mt-0.5 shrink-0 w-9 h-9 rounded-xl border-2 flex items-center justify-center transition ${
+            isDone
+              ? 'bg-sage border-sage text-white'
+              : 'bg-cream border-stone-400 text-transparent'
+          }">
+            <svg class="w-6 h-6 stroke-[3.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          <!-- 任務文字與小貼士 -->
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              ${roleBadgeHTML}
+              ${areaBadgeHTML}
+              ${isDone ? '<span class="text-dynamic-sm text-xs font-bold text-sage">✓ 已完成</span>' : ''}
+            </div>
+            <p class="text-dynamic-base text-base sm:text-lg font-bold leading-snug ${textStyle}">
+              ${task.text}
+            </p>
+            ${
+              task.note
+                ? `<div class="mt-2.5 px-3.5 py-2.5 rounded-2xl bg-cream border border-stone-200/90 text-dynamic-sm text-sm text-stone-700 flex items-start gap-2">
+                     <span class="shrink-0">📌</span>
+                     <span>${task.note}</span>
+                   </div>`
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    // ==================== 🛒 新屋採購討論分頁功能 ====================
+    function renderShoppingView(headerCard, contentArea) {
+      const totalItems = state.shoppingList.length;
+      const boughtCount = state.shoppingList.filter(i => i.bought).length;
+
+      headerCard.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h2 class="text-dynamic-lg text-lg sm:text-xl font-black text-amber-800">
+              🛒 新屋採購討論清單
+            </h2>
+            <p class="text-dynamic-base text-base text-stone-600 mt-1.5 leading-relaxed">
+              全家人一起討論新家要買什麼！可在下方直接新增項目、記錄尺寸或預算，討論好就打勾標記「已決定／已買」。
+            </p>
+          </div>
+          <span class="shrink-0 px-3 py-1.5 rounded-2xl bg-amber-100 text-amber-900 text-dynamic-sm text-xs sm:text-sm font-black">
+            已定案 ${boughtCount}/${totalItems}
+          </span>
+        </div>
+      `;
+
+      // 新增採購項目表單
+      const addFormHTML = `
+        <form onsubmit="handleAddShoppingItem(event)" class="rounded-3xl bg-white border-2 border-amber-200 p-4 sm:p-5 shadow-sm space-y-3">
+          <h3 class="text-dynamic-base text-base font-black text-charcoal flex items-center gap-1.5">
+            <span>➕</span>
+            <span>新增想討論或要買的東西</span>
+          </h3>
+          <div class="space-y-2.5">
+            <div>
+              <label for="newItemName" class="block text-dynamic-sm text-sm font-bold text-stone-700 mb-1">
+                物品名稱（必填）
+              </label>
+              <input
+                id="newItemName"
+                type="text"
+                required
+                placeholder="例如：客廳沙發、父母房遮光窗簾、熱水爐..."
+                class="w-full min-h-[48px] px-4 py-2.5 rounded-2xl border-2 border-stone-300 bg-cream text-dynamic-base text-base text-charcoal focus:outline-none focus:border-amber-600"
+              />
+            </div>
+            <div>
+              <label for="newItemNote" class="block text-dynamic-sm text-sm font-bold text-stone-700 mb-1">
+                備註／尺寸／預算（選填）
+              </label>
+              <input
+                id="newItemNote"
+                type="text"
+                placeholder="例如：闊度不超過 180cm、預算約 $3000、要防滑款式..."
+                class="w-full min-h-[48px] px-4 py-2.5 rounded-2xl border-2 border-stone-300 bg-cream text-dynamic-base text-base text-charcoal focus:outline-none focus:border-amber-600"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            class="w-full min-h-[48px] py-3 px-4 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-black text-dynamic-base text-base shadow-sm active:scale-98 transition flex items-center justify-center gap-2"
+          >
+            <span>＋ 加入採購討論清單</span>
+          </button>
+        </form>
+      `;
+
+      // 採購項目列表
+      const itemsListHTML = state.shoppingList.length === 0
+        ? `<div class="bg-white rounded-3xl p-8 text-center border border-stone-200 text-dynamic-base text-stone-500">目前沒有採購項目，請從上方新增喔！</div>`
+        : state.shoppingList.map(item => {
+            const cardStyle = item.bought
+              ? 'bg-sage-light/60 border-sage/40'
+              : 'bg-white border-stone-200';
+            const titleStyle = item.bought
+              ? 'line-through text-stone-500'
+              : 'text-charcoal';
+
+            return `
+              <div class="rounded-3xl p-4 sm:p-5 border-2 shadow-sm transition ${cardStyle}">
+                <div class="flex items-start gap-3.5">
+                  <!-- 勾選「已決定／已買」按鈕 -->
+                  <button
+                    type="button"
+                    onclick="toggleShoppingItem('${item.id}')"
+                    aria-label="切換已決定狀態"
+                    class="mt-0.5 shrink-0 w-9 h-9 rounded-xl border-2 flex items-center justify-center transition ${
+                      item.bought
+                        ? 'bg-sage border-sage text-white'
+                        : 'bg-cream border-stone-400 text-transparent'
+                    }"
+                  >
+                    <svg class="w-6 h-6 stroke-[3.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
+
+                  <!-- 項目內容 (點擊文字區域也可切換勾選) -->
+                  <div onclick="toggleShoppingItem('${item.id}')" class="flex-1 min-w-0 cursor-pointer select-none">
+                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                      <span class="px-2.5 py-0.5 rounded-xl text-dynamic-sm text-xs font-black ${
+                        item.bought
+                          ? 'bg-sage text-white'
+                          : 'bg-amber-100 text-amber-900'
+                      }">
+                        ${item.bought ? '✓ 已決定／已購買' : '💬 家人討論中'}
+                      </span>
+                    </div>
+                    <h4 class="text-dynamic-lg text-lg font-black leading-snug ${titleStyle}">
+                      ${escapeHTML(item.name)}
+                    </h4>
+                    ${
+                      item.note
+                        ? `<p class="mt-2 px-3 py-2 rounded-2xl bg-cream border border-stone-200/80 text-dynamic-sm text-sm text-stone-700 leading-relaxed">
+                             📝 ${escapeHTML(item.note)}
+                           </p>`
+                        : ''
+                    }
+                  </div>
+
+                  <!-- 刪除項目按鈕 (至少 48x48px) -->
+                  <button
+                    type="button"
+                    onclick="deleteShoppingItem('${item.id}')"
+                    aria-label="刪除此採購項目"
+                    title="刪除此項目"
+                    class="shrink-0 w-12 h-12 rounded-2xl border border-stone-200 bg-stone-50 hover:bg-red-50 hover:border-red-200 text-stone-500 hover:text-red-600 flex items-center justify-center transition active:scale-95"
+                  >
+                    <span class="text-xl">🗑️</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+      // 一鍵複製匯出到 WhatsApp / 微信群組按鈕
+      const exportButtonHTML = `
+        <div class="pt-2">
+          <button
+            type="button"
+            onclick="exportShoppingListToClipboard()"
+            class="w-full min-h-[54px] py-3.5 px-5 rounded-2xl bg-sage hover:bg-sage-dark text-white font-black text-dynamic-base text-base shadow-md active:scale-98 transition flex items-center justify-center gap-2"
+          >
+            <span class="text-xl">📋</span>
+            <span>一鍵複製採購清單（發到家庭群組討論）</span>
+          </button>
+        </div>
+      `;
+
+      contentArea.innerHTML = addFormHTML + itemsListHTML + exportButtonHTML;
+    }
+
+    // 新增採購項目處理
+    function handleAddShoppingItem(event) {
+      event.preventDefault();
+      const nameInput = document.getElementById('newItemName');
+      const noteInput = document.getElementById('newItemNote');
+
+      const nameVal = nameInput.value.trim();
+      const noteVal = noteInput.value.trim();
+
+      if (!nameVal) return;
+
+      const newItem = {
+        id: 'shop_' + Date.now(),
+        name: nameVal,
+        note: noteVal,
+        bought: false
+      };
+
+      state.shoppingList.unshift(newItem);
+      saveShoppingToStorage();
+      renderCurrentView();
+      showToast(`已加入「${nameVal}」到採購清單！`);
+    }
+
+    // 切換採購項目「已決定／已買」狀態
+    function toggleShoppingItem(itemId) {
+      const target = state.shoppingList.find(i => i.id === itemId);
+      if (target) {
+        target.bought = !target.bought;
+        saveShoppingToStorage();
+        renderCurrentView();
+      }
+    }
+
+    // 刪除採購項目
+    function deleteShoppingItem(itemId) {
+      const target = state.shoppingList.find(i => i.id === itemId);
+      state.shoppingList = state.shoppingList.filter(i => i.id !== itemId);
+      saveShoppingToStorage();
+      renderCurrentView();
+      if (target) {
+        showToast(`已刪除「${target.name}」`);
+      }
+    }
+
+    // 匯出採購清單文字並複製到剪貼簿 (相容 iframe 與手機瀏覽器)
+    function exportShoppingListToClipboard() {
+      if (state.shoppingList.length === 0) {
+        showToast('目前清單是空的，先新增幾個項目再複製喔！');
+        return;
+      }
+
+      const lines = ['🏡【新屋採購討論清單】'];
+      state.shoppingList.forEach((item, index) => {
+        const statusMark = item.bought ? '✅ [已定案]' : '⬜ [討論中]';
+        lines.push(`${index + 1}. ${statusMark} ${item.name}`);
+        if (item.note) {
+          lines.push(`   備註：${item.note}`);
+        }
+      });
+      lines.push('\n大家看看尺寸和預算有沒有要補充～');
+
+      const formattedText = lines.join('\n');
+
+      // 使用 textarea + execCommand('copy') 確保在各類手機與內嵌環境穩定運作
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = formattedText;
+      tempTextArea.style.position = 'fixed';
+      tempTextArea.style.left = '-9999px';
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      tempTextArea.setSelectionRange(0, 99999);
+
+      try {
+        document.execCommand('copy');
+        showToast('✅ 已複製清單文字！可直接貼到 WhatsApp / 微信群組');
+      } catch (err) {
+        console.error('複製失敗:', err);
+        showToast('複製失敗，請手動長按文字複製');
+      } finally {
+        document.body.removeChild(tempTextArea);
+      }
+    }
+
+    // 防止 XSS 的簡易字元轉義
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // 渲染「💡 長輩防累與打包秘訣」分頁
+    function renderTipsView(headerCard, contentArea) {
+      headerCard.innerHTML = `
+        <h2 class="text-dynamic-lg text-lg sm:text-xl font-black text-sage">${TIPS_DATA.title}</h2>
+        <p class="text-dynamic-base text-base text-stone-600 mt-1.5 leading-relaxed">${TIPS_DATA.subtitle}</p>
+      `;
+
+      contentArea.innerHTML = TIPS_DATA.cards.map(card => `
+        <article class="rounded-3xl bg-white border border-stone-200 p-4 sm:p-5 shadow-sm">
+          <div class="flex items-center gap-3 mb-2.5">
+            <span class="w-11 h-11 rounded-2xl bg-sage-light text-sage font-black text-lg flex items-center justify-center shrink-0">
+              ${card.icon}
+            </span>
+            <h3 class="text-dynamic-lg text-lg font-black text-charcoal">
+              ${card.title}
+            </h3>
+          </div>
+          <p class="text-dynamic-base text-base text-stone-700 leading-relaxed">
+            ${card.body}
+          </p>
+        </article>
+      `).join('');
+    }
+
+    // 重設進度確認對話框控制
+    function openResetModal() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeResetModal() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmResetProgress() {
+      state.completedIds.clear();
+      saveCompletedToStorage();
+      closeResetModal();
+      renderTabs();
+      renderCurrentView();
+      updateOverallProgress();
+      showToast('已清除所有打包打勾紀錄，重新開始！');
+    }
+
+    // 顯示輕量提示訊息
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById('toastBanner');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+    }
+
+    // 頁面載入完成後啟動
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
